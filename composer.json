@@ -1,0 +1,25 @@
+{
+    "name": "00f100/phpsize",
+    "type": "package",
+    "version": "0.1.0",
+    "description": "Package to return informations about your project",
+    "keywords": ["get", "php", "code", "size"],
+    "homepage": "https://github.com/00f100/phpsize",
+    "authors": [
+        {
+            "name": "João Moraes",
+            "email": "joaomoraesbr@gmail.com",
+            "homepage": "https://github.com/00f100"
+        }
+    ],
+    "require": {
+        "php": ">=5.5",
+        "phpunit/phpunit": "4.*"
+    },
+    "autoload": {
+        "files": ["src/functions.php"],
+        "psr-4": {
+            "PHPsize\\": "src/"
+        }
+    }
+}
