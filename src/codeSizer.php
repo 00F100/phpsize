@@ -2,6 +2,8 @@
 
 namespace PHPsize
 {
+	use Phar;
+
 	class codeSizer
 	{
 		private $_version = '0.1.0';
@@ -22,24 +24,26 @@ namespace PHPsize
 			'class',
 			'}'
 		);
-		private $_svg = '<svg xmlns="http://www.w3.org/2000/svg" width="150" height="20">
+		private $_svg = '<svg xmlns="http://www.w3.org/2000/svg" width="150" height="18">
 							<linearGradient id="b" x2="0" y2="100%%">
-								<stop offset="0" stop-color="#bbb" stop-opacity=".1"/>
-								<stop offset="1" stop-opacity=".1"/>
+								<stop offset="0" stop-color="#fff" stop-opacity=".7"/>
+								<stop offset=".1" stop-color="#aaa" stop-opacity=".1"/>
+								<stop offset=".9" stop-opacity=".3"/>
+								<stop offset="1" stop-opacity=".5"/>
 							</linearGradient>
 							<mask id="a">
-								<rect width="150" height="20" rx="3" fill="#fff"/>
+								<rect width="150" height="18" rx="4" fill="#fff"/>
 							</mask>
 							<g mask="url(#a)">
-								<path fill="#555" d="M0 0h77v20H0z"/>
-								<path fill="%s" d="M77 0h73v20H77z"/>
-								<path fill="url(#b)" d="M0 0h150v20H0z"/>
+								<path fill="#555" d="M0 0h77v18H0z"/>
+								<path fill="%s" d="M77 0h73v18H77z"/>
+								<path fill="url(#b)" d="M0 0h150v18H0z"/>
 							</g>
 							<g fill="#fff" text-anchor="middle" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="11">
-								<text x="38.5" y="15" fill="#010101" fill-opacity=".3">%s</text>
-								<text x="38.5" y="14">%s</text>
-								<text x="112.5" y="15" fill="#010101" fill-opacity=".3">%s</text>
-								<text x="112.5" y="14">%s</text>
+								<text x="39.5" y="14" fill="#010101" fill-opacity=".3">%s</text>
+								<text x="39.5" y="13">%s</text>
+								<text x="112.5" y="14" fill="#010101" fill-opacity=".3">%s</text>
+								<text x="112.5" y="13">%s</text>
 							</g>
 						</svg>';
 
@@ -79,11 +83,12 @@ namespace PHPsize
 				next($args);
 			}
 			if($this->getDirectory() && $this->getExtension()){
-				$files = scandir($this->getDirectory());
+				$directory = str_replace($_SERVER['argv'][0], '', Phar::running(false)) . $this->getDirectory();
+				$files = scandir($directory);
 				if($this->getRecursive()){
-					$scan = $this->scan($files, true);
+					$scan = $this->scan($directory, $files, true);
 				}else{
-					$scan = $this->scan($files, false);
+					$scan = $this->scan($directory, $files, false);
 				}
 				if(is_array($scan) && count($scan) > 0){
 					if($this->getDirSaveSvg()){
@@ -107,27 +112,27 @@ namespace PHPsize
 
 		public function makeSvgCountLines($value)
 		{
-			$this->writeSvg('countLines', sprintf($this->_svg, '#007ec6', 'lines', 'lines', $value, $value));
+			$this->writeSvg('countLines', file_get_contents('https://img.shields.io/badge/lines-' . $value . '-blue.svg?style=plastic'));
 		}
 
 		public function makeSvgCountDigits($value)
 		{
-			$this->writeSvg('countDigits', sprintf($this->_svg, '#007ec6', 'digits', 'digits', $value, $value));
+			$this->writeSvg('countDigits', file_get_contents('https://img.shields.io/badge/digits-' . $value . '-blue.svg?style=plastic'));
 		}
 
 		public function makeSvgCountFiles($value)
 		{
-			$this->writeSvg('countFiles', sprintf($this->_svg, '#007ec6', 'files', 'files', $value, $value));
+			$this->writeSvg('countFiles', file_get_contents('https://img.shields.io/badge/files-' . $value . '-blue.svg?style=plastic'));
 		}
 
 		public function makeSvgCountLogicLines($value)
 		{
-			$this->writeSvg('countLogicLines', sprintf($this->_svg, '#007ec6', 'logic lines', 'logic lines', $value, $value));
+			$this->writeSvg('countLogicLines', file_get_contents('https://img.shields.io/badge/logic lines-' . $value . '-blue.svg?style=plastic'));
 		}
 
 		public function makeSvgCountLogicDigits($value)
 		{
-			$this->writeSvg('countLogicDigits', sprintf($this->_svg, '#007ec6', 'logic digits', 'logic digits', $value, $value));
+			$this->writeSvg('countLogicDigits', file_get_contents('https://img.shields.io/badge/logic digits-' . $value . '-blue.svg?style=plastic'));
 		}
 
 		public function writeSvg($filename, $svg)
@@ -137,7 +142,7 @@ namespace PHPsize
 			fclose($fopen);
 		}
 
-		public function scan(array $files, $recursive = true, $path = false)
+		public function scan($directory, array $files, $recursive = true, $path = false)
 		{
 			$return = array();
 			$countLines = 0;
@@ -148,13 +153,14 @@ namespace PHPsize
 			foreach($files as $file){
 				if($file != '.' && $file != '..'){
 					if($path){
-						$filePath = $this->getDirectory() . $path . $file;
+						$filePath = $directory . $path . $file;
 					}else{
-						$filePath = $this->getDirectory() . $file;
+						$filePath = $directory . $file;
+						// $filePath = $this->getDirectory() . $file;
 					}
 					if($recursive && is_dir($filePath)){
-						$files = scandir($this->getDirectory() . $filePath . '/', $recursive);
-						$return[] = $this->scan($files, $recursive, ($path ? $path : '') . $file . '/', false);
+						$files = scandir($filePath . '/', $recursive);
+						$return[] = $this->scan($directory, $files, $recursive, ($path ? $path : '') . $file . '/', false);
 					}else{
 						if(is_file($filePath)){
 							$extension = end(explode('.', $filePath));
