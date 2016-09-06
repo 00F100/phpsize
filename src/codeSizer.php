@@ -3,8 +3,9 @@
 namespace PHPsize
 {
 	use Phar;
+	use FilesystemIterator;
 
-	class codeSizer
+	class CodeSizer
 	{
 		private $_version = '0.1.0';
 		private $_directory = false;
@@ -239,7 +240,7 @@ namespace PHPsize
 
 		private function getPathDir()
 		{
-			$phar= new Phar();
+			$phar= new Phar('./phpsize.phar', FilesystemIterator::CURRENT_AS_FILEINFO, 'phpsize.phar');
 			return $phar->running(false);
 		}
 	}
