@@ -49,7 +49,6 @@ namespace PHPsize
 
 		public function init()
 		{
-			$sucess = false;
 			$args = func_get_args();
 
 			$this->_echo("PHPsize version " . $this->_version . "\n");
@@ -142,7 +141,7 @@ namespace PHPsize
 			fclose($fopen);
 		}
 
-		public function scan($directory, array $files, $recursive = true, $path = false)
+		public function scan($directory, array $files, $recursive, $path = null)
 		{
 			$return = array();
 			$countLines = 0;
@@ -262,7 +261,6 @@ namespace PHPsize
 			$this->_echo("         -g,  --generate-svg  Directory to save SVG files\n");
 			$this->_echo("         -r,  --recursive     Include subdirectory\n");
 			$this->_echo("         -h,  --help          Show this dialog\n");
-			die(0);
 		}
 
 		private function _echo($var)
