@@ -24,32 +24,11 @@ namespace PHPsize
 			'class',
 			'}'
 		);
-		private $_svg = '<svg xmlns="http://www.w3.org/2000/svg" width="150" height="18">
-							<linearGradient id="b" x2="0" y2="100%%">
-								<stop offset="0" stop-color="#fff" stop-opacity=".7"/>
-								<stop offset=".1" stop-color="#aaa" stop-opacity=".1"/>
-								<stop offset=".9" stop-opacity=".3"/>
-								<stop offset="1" stop-opacity=".5"/>
-							</linearGradient>
-							<mask id="a">
-								<rect width="150" height="18" rx="4" fill="#fff"/>
-							</mask>
-							<g mask="url(#a)">
-								<path fill="#555" d="M0 0h77v18H0z"/>
-								<path fill="%s" d="M77 0h73v18H77z"/>
-								<path fill="url(#b)" d="M0 0h150v18H0z"/>
-							</g>
-							<g fill="#fff" text-anchor="middle" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="11">
-								<text x="39.5" y="14" fill="#010101" fill-opacity=".3">%s</text>
-								<text x="39.5" y="13">%s</text>
-								<text x="112.5" y="14" fill="#010101" fill-opacity=".3">%s</text>
-								<text x="112.5" y="13">%s</text>
-							</g>
-						</svg>';
 
 		public function init()
 		{
 			$args = func_get_args();
+			$argv = $_SERVER['argv'];
 
 			$this->_echo("PHPsize version " . $this->_version . "\n");
 
@@ -82,7 +61,7 @@ namespace PHPsize
 				next($args);
 			}
 			if($this->getDirectory() && $this->getExtension()){
-				$directory = str_replace($_SERVER['argv'][0], '', Phar::running(false)) . $this->getDirectory();
+				$directory = str_replace($argv[0], '', $this->getPathDir()) . $this->getDirectory();
 				$files = scandir($directory);
 				if($this->getRecursive()){
 					$scan = $this->scan($directory, $files, true);
@@ -266,6 +245,11 @@ namespace PHPsize
 		private function _echo($var)
 		{
 			echo $var;
+		}
+
+		private function getPathDir()
+		{
+			return Phar::running(false);
 		}
 	}
 }
