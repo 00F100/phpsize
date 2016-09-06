@@ -28,7 +28,6 @@ namespace PHPsize
 		public function init()
 		{
 			$args = func_get_args();
-			$argv = $_SERVER['argv'];
 
 			$this->_echo("PHPsize version " . $this->_version . "\n");
 
@@ -63,11 +62,7 @@ namespace PHPsize
 			if($this->getDirectory() && $this->getExtension()){
 				$directory = str_replace($argv[0], '', $this->getPathDir()) . $this->getDirectory();
 				$files = scandir($directory);
-				if($this->getRecursive()){
-					$scan = $this->scan($directory, $files, true);
-				}else{
-					$scan = $this->scan($directory, $files, false);
-				}
+				$scan = $this->scan($directory, $files, $this->getRecursive());
 				if(is_array($scan) && count($scan) > 0){
 					if($this->getDirSaveSvg()){
 						return $this->makeSvg($scan);
