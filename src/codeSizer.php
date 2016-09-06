@@ -66,9 +66,8 @@ namespace PHPsize
 				if(is_array($scan) && count($scan) > 0){
 					if($this->getDirSaveSvg()){
 						return $this->makeSvg($scan);
-					}else{
-						return json_encode($scan);
 					}
+					return json_encode($scan);
 				}
 			}
 			return $this->help();
@@ -125,11 +124,9 @@ namespace PHPsize
 			$countLogicDigits = 0;
 			foreach($files as $file){
 				if($file != '.' && $file != '..'){
+					$filePath = $directory . $file;
 					if($path){
 						$filePath = $directory . $path . $file;
-					}else{
-						$filePath = $directory . $file;
-						// $filePath = $this->getDirectory() . $file;
 					}
 					if($recursive && is_dir($filePath)){
 						$files = scandir($filePath . '/', $recursive);
