@@ -131,38 +131,38 @@ namespace PHPsize
 					if($recursive && is_dir($filePath)){
 						$files = scandir($filePath . '/', $recursive);
 						$return[] = $this->scan($directory, $files, $recursive, ($path ? $path : '') . $file . '/', false);
-					}else{
-						if(is_file($filePath)){
-							$extension = end(explode('.', $filePath));
-							if(in_array($extension, $this->getExtension())){
-								$contentFile = file_get_contents($filePath);
-								$lines = explode("\n", $contentFile);
-								$countFiles = $countFiles + 1;
-								if(count($lines) > 0){
-									foreach($lines as $line){
+					}
+					if(is_file($filePath)){
+						$extension = end(explode('.', $filePath));
+						if(in_array($extension, $this->getExtension())){
+							$contentFile = file_get_contents($filePath);
+							$lines = explode("\n", $contentFile);
+							$countFiles = $countFiles + 1;
+							if(count($lines) > 0){
+								foreach($lines as $line){
 
-										$ignoreLine = false;
-										$line = trim($line);
+									$ignoreLine = false;
+									$line = trim($line);
 
-										foreach($this->_exclude as $exclude){
-											$value = substr($line, 0, strlen($exclude));
-											if($value == $exclude){
-												$ignoreLine = true;
-											}
+									foreach($this->_exclude as $exclude){
+										$value = substr($line, 0, strlen($exclude));
+										if($value == $exclude){
+											$ignoreLine = true;
 										}
-										if(!$ignoreLine){
-											$countLogicLines++;
-											$countLogicDigits = $countLogicDigits + strlen($line);
-										}
-										$countLines++;
-										$countDigits = $countDigits + strlen($line);
 									}
+									if(!$ignoreLine){
+										$countLogicLines++;
+										$countLogicDigits = $countLogicDigits + strlen($line);
+									}
+									$countLines++;
+									$countDigits = $countDigits + strlen($line);
 								}
 							}
 						}
 					}
 				}
 			}
+			$result = compact('countLines', 'countDigits', 'countFiles', 'countLogic', 'countLogicLines', 'countLogicDigits');
 			if(is_array($return) && count($return) > 0){
 				$local = compact('countLines', 'countDigits', 'countFiles', 'countLogic', 'countLogicLines', 'countLogicDigits');
 				foreach($return as $item){
@@ -172,11 +172,9 @@ namespace PHPsize
 						}
 					}
 				}
-				$return = $local;
-			}else{
-				$return = compact('countLines', 'countDigits', 'countFiles', 'countLogic', 'countLogicLines', 'countLogicDigits');
+				$result = $local;
 			}
-			return $return;
+			return $result;
 		}
 
 		public function setDirectory($directory)
