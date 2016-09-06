@@ -7,9 +7,9 @@ namespace PHPsize
 
 	class CodeSizer
 	{
-		private $version = '0.1.0';
+		private $version = '0.2.0';
 		private $directory = false;
-		private $extensions = false;
+		private $extensions = array();
 		private $recursive = false;
 		private $dirSaveSvg = false;
 		private $exclude = array(
@@ -30,8 +30,33 @@ namespace PHPsize
 		{
 			$args = func_get_args();
 
-			$this->_echo("PHPsize version " . $this->version . "\n");
+			$this->outputText("PHPsize version " . $this->version . "\n");
 
+			$this->configureArgs($args);
+			
+			if($json = $this->process($args)){
+				return 'SVG files were generated in: ' . $this->getDirSaveSvg();
+			}
+			return $this->help();
+		}
+
+		private function process($args)
+		{
+			if($this->getDirectory() && $this->getExtension()){
+				$directory = str_replace($args[0], '', $this->getPathDir()) . $this->getDirectory();
+				$files = scandir($directory);
+				$scan = $this->scan($directory, $files, $this->getRecursive());
+				if(is_array($scan) && count($scan) > 0){
+					if($this->getDirSaveSvg()){
+						return $this->makeSvg($scan);
+					}
+					return json_encode($scan);
+				}
+			}
+		}
+
+		private function configureArgs($args)
+		{
 			while($value = current($args)){
 				switch($value){
 					case '--dir':
@@ -60,18 +85,6 @@ namespace PHPsize
 				}
 				next($args);
 			}
-			if($this->getDirectory() && $this->getExtension()){
-				$directory = str_replace($args[0], '', $this->getPathDir()) . $this->getDirectory();
-				$files = scandir($directory);
-				$scan = $this->scan($directory, $files, $this->getRecursive());
-				if(is_array($scan) && count($scan) > 0){
-					if($this->getDirSaveSvg()){
-						return $this->makeSvg($scan);
-					}
-					return json_encode($scan);
-				}
-			}
-			return $this->help();
 		}
 
 		public function makeSvg($scan)
@@ -81,6 +94,7 @@ namespace PHPsize
 			$this->makeSvgCountFiles(number_format($scan['countFiles'], 0, ',', '.'));
 			$this->makeSvgCountLogicLines(number_format($scan['countLogicLines'], 0, ',', '.'));
 			$this->makeSvgCountLogicDigits(number_format($scan['countLogicDigits'], 0, ',', '.'));
+			return true;
 		}
 
 		public function makeSvgCountLines($value)
@@ -132,6 +146,7 @@ namespace PHPsize
 					if($recursive && is_dir($filePath)){
 						$files = scandir($filePath . '/', $recursive);
 						$return[] = $this->scan($directory, $files, $recursive, ($path ? $path : '') . $file . '/', false);
+
 					}
 					if(is_file($filePath)){
 						$extension = end(explode('.', $filePath));
@@ -190,7 +205,8 @@ namespace PHPsize
 
 		public function setExtension($extensions)
 		{
-			$this->extensions = explode(',', $extensions);
+			$extensions = explode(',', $extensions);
+			$this->extensions = array_merge($this->extensions, $extensions);
 		}
 
 		public function getExtension()
@@ -220,20 +236,20 @@ namespace PHPsize
 
 		public function help()
 		{
-			$this->_echo("   Usage:\n");
-			$this->_echo("         Return JSON: \n");
-			$this->_echo("         php phpsize.phar --dir <path dir> --extension <valid extension> [--recursive] \n\n");
-			$this->_echo("         Create badges SVG: \n");
-			$this->_echo("         php phpsize.phar --dir <path dir> --extension <valid extension> --generate-svg <path dir> [--recursive] \n\n");
-			$this->_echo("   Options:\n");
-			$this->_echo("         -d,  --dir           Directory to load files\n");
-			$this->_echo("         -e,  --extension     Extension of files to load\n");
-			$this->_echo("         -g,  --generate-svg  Directory to save SVG files\n");
-			$this->_echo("         -r,  --recursive     Include subdirectory\n");
-			$this->_echo("         -h,  --help          Show this dialog\n");
+			$this->outputText("   Usage:\n");
+			$this->outputText("         Return JSON: \n");
+			$this->outputText("         php phpsize.phar --dir <path dir> --extension <valid extension> [--recursive] \n\n");
+			$this->outputText("         Create badges SVG: \n");
+			$this->outputText("         php phpsize.phar --dir <path dir> --extension <valid extension> --generate-svg <path dir> [--recursive] \n\n");
+			$this->outputText("   Options:\n");
+			$this->outputText("         -d,  --dir           Directory to load files\n");
+			$this->outputText("         -e,  --extension     Extension of files to load\n");
+			$this->outputText("         -g,  --generate-svg  Directory to save SVG files\n");
+			$this->outputText("         -r,  --recursive     Include subdirectory\n");
+			$this->outputText("         -h,  --help          Show this dialog\n");
 		}
 
-		private function _echo($var)
+		private function outputText($var)
 		{
 			echo $var;
 		}
