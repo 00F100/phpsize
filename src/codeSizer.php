@@ -7,12 +7,12 @@ namespace PHPsize
 
 	class CodeSizer
 	{
-		private $_version = '0.1.0';
-		private $_directory = false;
-		private $_extensions = false;
-		private $_recursive = false;
-		private $_dir_save_svg = false;
-		private $_exclude = array(
+		private $version = '0.1.0';
+		private $directory = false;
+		private $extensions = false;
+		private $recursive = false;
+		private $dirSaveSvg = false;
+		private $exclude = array(
 			'<?php',
 			'?>',
 			'/**',
@@ -30,7 +30,7 @@ namespace PHPsize
 		{
 			$args = func_get_args();
 
-			$this->_echo("PHPsize version " . $this->_version . "\n");
+			$this->_echo("PHPsize version " . $this->version . "\n");
 
 			while($value = current($args)){
 				switch($value){
@@ -145,7 +145,7 @@ namespace PHPsize
 									$ignoreLine = false;
 									$line = trim($line);
 
-									foreach($this->_exclude as $exclude){
+									foreach($this->exclude as $exclude){
 										$value = substr($line, 0, strlen($exclude));
 										if($value == $exclude){
 											$ignoreLine = true;
@@ -180,42 +180,42 @@ namespace PHPsize
 
 		public function setDirectory($directory)
 		{
-			$this->_directory = $directory;
+			$this->directory = $directory;
 		}
 
 		public function getDirectory()
 		{
-			return $this->_directory;
+			return $this->directory;
 		}
 
 		public function setExtension($extensions)
 		{
-			$this->_extensions = explode(',', $extensions);
+			$this->extensions = explode(',', $extensions);
 		}
 
 		public function getExtension()
 		{
-			return $this->_extensions;
+			return $this->extensions;
 		}
 
 		public function setRecursive($recursive)
 		{
-			$this->_recursive = $recursive;
+			$this->recursive = $recursive;
 		}
 
 		public function getRecursive()
 		{
-			return $this->_recursive;
+			return $this->recursive;
 		}
 
 		public function setDirSaveSvg($dirSaveSvg)
 		{
-			$this->_dir_save_svg = $dirSaveSvg;
+			$this->dirSaveSvg = $dirSaveSvg;
 		}
 
 		public function getDirSaveSvg()
 		{
-			return $this->_dir_save_svg;
+			return $this->dirSaveSvg;
 		}
 
 		public function help()
