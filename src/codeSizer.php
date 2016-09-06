@@ -60,7 +60,7 @@ namespace PHPsize
 				next($args);
 			}
 			if($this->getDirectory() && $this->getExtension()){
-				$directory = str_replace($argv[0], '', $this->getPathDir()) . $this->getDirectory();
+				$directory = str_replace($args[0], '', $this->getPathDir()) . $this->getDirectory();
 				$files = scandir($directory);
 				$scan = $this->scan($directory, $files, $this->getRecursive());
 				if(is_array($scan) && count($scan) > 0){
@@ -239,7 +239,8 @@ namespace PHPsize
 
 		private function getPathDir()
 		{
-			return Phar::running(false);
+			$phar= new Phar();
+			return $phar->running(false);
 		}
 	}
 }
