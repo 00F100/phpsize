@@ -12,6 +12,7 @@ namespace PHPsize
 		private $extensions = array();
 		private $recursive = false;
 		private $dirSaveSvg = false;
+		private $help = false;
 		private $exclude = array(
 			'<?php',
 			'?>',
@@ -32,16 +33,14 @@ namespace PHPsize
 
 			$this->outputText("PHPsize version " . $this->version . "\n");
 
-			$this->configureArgs($args);
-			
-			if($json = $this->process($args)){
-				return 'SVG files were generated in: ' . $this->getDirSaveSvg();
-			}
-			return $this->help();
+			return $this->process($args);
 		}
 
 		private function process($args)
 		{
+			if($return = $this->configureArgs($args)){
+				return $return;
+			}
 			if($this->getDirectory() && $this->getExtension()){
 				$directory = str_replace($args[0], '', $this->getPathDir()) . $this->getDirectory();
 				$files = scandir($directory);
@@ -52,6 +51,9 @@ namespace PHPsize
 					}
 					return json_encode($scan);
 				}
+			}
+			if(!$this->help){
+				return $this->help();
 			}
 		}
 
@@ -85,6 +87,7 @@ namespace PHPsize
 				}
 				next($args);
 			}
+			return false;
 		}
 
 		public function makeSvg($scan)
@@ -94,7 +97,7 @@ namespace PHPsize
 			$this->makeSvgCountFiles(number_format($scan['countFiles'], 0, ',', '.'));
 			$this->makeSvgCountLogicLines(number_format($scan['countLogicLines'], 0, ',', '.'));
 			$this->makeSvgCountLogicDigits(number_format($scan['countLogicDigits'], 0, ',', '.'));
-			return true;
+			return 'SVG files were generated in: ' . $this->getDirSaveSvg();
 		}
 
 		public function makeSvgCountLines($value)
@@ -236,6 +239,7 @@ namespace PHPsize
 
 		public function help()
 		{
+			$this->help = true;
 			$this->outputText("   Usage:\n");
 			$this->outputText("         Return JSON: \n");
 			$this->outputText("         php phpsize.phar --dir <path dir> --extension <valid extension> [--recursive] \n\n");
