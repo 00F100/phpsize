@@ -9,7 +9,7 @@ PHPsize
 [![Count Lines](https://00f100.github.io/phpsize/countLines.svg)](https://github.com/00F100/phpsize)
 [![Count Digits](https://00f100.github.io/phpsize/countDigits.svg)](https://github.com/00F100/phpsize)
 [![Count Logic Lines](https://00f100.github.io/phpsize/countLogicLines.svg)](https://github.com/00F100/phpsize)
-[![Count Logic Digits](https://00f100.github.io/phpsize/countLogicLines.svg)](https://github.com/00F100/phpsize)
+[![Count Logic Digits](https://00f100.github.io/phpsize/countLogicDigits.svg)](https://github.com/00F100/phpsize)
 
 Measure the size of project in number of files, lines, etc.
 
