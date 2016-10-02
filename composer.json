@@ -16,8 +16,10 @@
         "php": ">=5.5",
         "phpunit/phpunit": "4.*"
     },
+    "require-dev": {
+        "00f100/phpdbug": "*"
+    },
     "autoload": {
-        "files": ["src/functions.php"],
         "psr-4": {
             "PHPsize\\": "src/"
         }
