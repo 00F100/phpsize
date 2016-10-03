@@ -1,8 +1,8 @@
 {
     "name": "00f100/phpsize",
     "type": "package",
-    "version": "0.1.0",
-    "description": "Package to return informations about your project",
+    "version": "0.3.0",
+    "description": "Package to measure the amount of files and lines of a project",
     "keywords": ["get", "php", "code", "size"],
     "homepage": "https://github.com/00f100/phpsize",
     "authors": [
@@ -13,10 +13,10 @@
         }
     ],
     "require": {
-        "php": ">=5.5",
-        "phpunit/phpunit": "4.*"
+        "php": ">=5.5"
     },
     "require-dev": {
+        "phpunit/phpunit": "4.*",
         "00f100/phpdbug": "*"
     },
     "autoload": {

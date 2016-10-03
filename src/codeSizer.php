@@ -7,7 +7,8 @@ namespace PHPsize
 
 	class CodeSizer
 	{
-		private $version = '0.2.0';
+		const VERSION = '0.3.0';
+
 		private $directory = false;
 		private $extensions = array();
 		private $recursive = false;
@@ -31,7 +32,7 @@ namespace PHPsize
 		{
 			$args = func_get_args();
 
-			$this->outputText("PHPsize version " . $this->version . "\n");
+			$this->outputText("PHPsize version " . self::VERSION . "\n");
 
 			return $this->process($args);
 		}

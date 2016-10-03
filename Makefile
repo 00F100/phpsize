@@ -1,0 +1,63 @@
+.PHONY: all update-repo clean-dist download-composer composer-run download-php2phar php2phar-run commit-push-changes-git test
+
+all: update-repo mkdir-dist clean-dist mkdir-bin download-composer composer-run download-php2phar php2phar-run commit-push-changes-git
+test: update-repo mkdir-dist clean-dist mkdir-bin download-composer composer-dev-run download-php2phar php2phar-run
+
+update-repo:
+	git reset --hard;
+	git checkout master;
+	git pull origin master;
+
+mkdir-dist:
+	if [ ! -d "dist" ] ; then \
+		mkdir dist; \
+	fi
+
+clean-dist:
+	if [ -f "dist/phpsize.phar" ] ; then \
+		rm dist/phpsize.phar; \
+	fi
+	if [ -f "dist/phpsize.phar.gz" ] ; then \
+		rm dist/phpsize.phar.gz; \
+	fi
+
+mkdir-bin:
+	if [ ! -d "bin" ] ; then \
+		mkdir bin; \
+	fi
+
+download-composer:
+	if [ ! -f "bin/composer.phar" ] ; then \
+		cd bin; \
+		php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"; \
+		php composer-setup.php; \
+		php -r "unlink('composer-setup.php');"; \
+	fi;
+
+composer-run:
+	if [ -f "composer.lock" ] ; then \
+		php bin/composer.phar update --no-dev; \
+	else \
+		php bin/composer.phar install --no-dev; \
+	fi
+
+composer-dev-run:
+	if [ -f "composer.lock" ] ; then \
+		php bin/composer.phar update; \
+	else \
+		php bin/composer.phar install; \
+	fi
+
+download-php2phar:
+	if [ ! -f "bin/php2phar.phar" ] ; then \
+		cd bin; \
+		wget https://github.com/00F100/php2phar/raw/master/dist/php2phar.phar; \
+	fi
+
+php2phar-run:
+	php bin/php2phar.phar -d ./ -i src/index.php -o dist/phpsize.phar;
+
+commit-push-changes-git:
+	git add "dist/phpsize.phar";
+	git commit -m "Jenkins update the phpsize.phar";
+	git push origin master;
